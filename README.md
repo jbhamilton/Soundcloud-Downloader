@@ -1,6 +1,13 @@
 Used to download music files from SoundCloud.com even if the download button is not available.
 
+### 6/8/2014
+  - now using songdetails lib to write ID3 tag information about artist name, track name, genre, and year released.
+
 ___
+
+### Dependencies
+
+[songdetails by Ciantic](https://github.com/Ciantic/songdetails)
 
 ### How to use
 

@@ -2,6 +2,7 @@
 import urllib2, sys, re
 import urllib
 import glob
+import songdetails
 
 from xml.dom.minidom import parseString
 
@@ -19,6 +20,18 @@ def get_title(track):
 	title = "%s.mp3" % get_tag(track, 'title')
 
 	return title.replace('/', '-')
+
+def get_artist(user):
+        return get_tag(user,'username')
+
+def get_genre(track):
+        return get_tag(track,'genre')
+
+def get_year(track):
+        year = track.getElementsByTagName('release-year')[0]
+        if year.getAttribute('type')=='integer':
+            return year.firstChild.nodeValue
+        return ''
 
 def get_url(track):
 	# regular expression for the string we will search for in waveform-url tag
@@ -60,7 +73,7 @@ def main():
 	client_id = sys.argv[-1]
 
 	# retrieve the URL of the song to download from the final command-line argument
-	soundcloud_api = "https://api.soundcloud.com/users/%s/%s?client_id=%s&limit=9999" % (user, type, client_id)
+	soundcloud_api = "https://api.soundcloud.com/users/%s/%s?client_id=%s&limit=3" % (user, type, client_id)
 
 	try:
 		# open api URL for reading
@@ -79,11 +92,21 @@ def main():
 
 	print "Ready to download the %s %s of the %s user... " % (len(tracks), type, user)
 
-	# download songs for each track for the user
+        # download songs for each track for the user
 	for track in tracks:
 
 		title = get_title(track)
+		artist = get_artist(track.getElementsByTagName('user')[0])
 		url   = get_url(track)
+		genre = get_genre(track)
+		year = get_year(track)
+
+		#print title
+		#print artist
+		#print url
+		#print genre
+		#print year
+		#print '\n'
 
                 #if the song already exsists in the directory do nothing
 	        if unicode(title) in alreadyDownloadedTracks:
@@ -93,9 +116,20 @@ def main():
 		print "Downloading File '%s'" % title
                 try:
                     urllib.urlretrieve(url, title)
+                    # set the ID3 tagging information for the track
+                    song = songdetails.scan(title)
+                    if song is not None:
+                        song.artist = unicode(artist) 
+                        title = title.replace('.mp3','')
+                        song.title = unicode(title) 
+                        song.genre = unicode(genre)
+                        song.year = year
+                        song.save()
+
                 except IOError as e:
                     failedTracks.append(title)
                     print 'Connection to SoundCloud Failed, unable to download:\n '+title+'\n continuing to next song'
+
 
 	print "Download Complete"
         if len(failedTracks)>0:

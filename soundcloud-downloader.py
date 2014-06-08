@@ -73,7 +73,7 @@ def main():
 	client_id = sys.argv[-1]
 
 	# retrieve the URL of the song to download from the final command-line argument
-	soundcloud_api = "https://api.soundcloud.com/users/%s/%s?client_id=%s&limit=3" % (user, type, client_id)
+	soundcloud_api = "https://api.soundcloud.com/users/%s/%s?client_id=%s&limit=9999" % (user, type, client_id)
 
 	try:
 		# open api URL for reading

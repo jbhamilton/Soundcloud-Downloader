@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-import urllib2, sys, re
+import urllib2, sys, re, os
 import urllib
 import glob
 import songdetails
@@ -65,28 +65,31 @@ def main():
 	for track in tracks:
 
 	        title = track['title'].replace('.mp3','')
+	        filename = title+'.mp3'
 	        artist = track['user']['username']
-	        url = get_url(track) 
+	        url = get_url(track)
 	        genre = track['genre']
 	        year = track['release_year']
 
                 try:
                     #if the song already exsists in the directory do nothing
-	            if title in alreadyDownloadedTracks:
-                        print 'Song Already Downloaded : '+title+'\n'
+	            if filename in alreadyDownloadedTracks:
+                        print 'Song Already Downloaded : '+filename+'\n'
                         continue
 
-		    print "Downloading File '%s'" % title
+		    print "Downloading File '%s'" % filename
                     try:
                         urllib.urlretrieve(url, title)
                         # set the ID3 tagging information for the track
                         song = songdetails.scan(title)
                         if song is not None:
                             song.artist = artist
-                            song.title = title 
+                            song.title = title
                             song.genre = genre
                             song.year = year
                             song.save()
+
+                        os.rename( title, filename )
 
                     except IOError as e:
                         failedTracks.append(title)

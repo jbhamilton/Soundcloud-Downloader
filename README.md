@@ -4,6 +4,7 @@ Based on the working directory you run the script from, mp3 tracks in the direct
 tracks from being downloaded twice.
 
 Uses ID3 tagging to set:
+
     - Artist name
     - Title
     - Genre

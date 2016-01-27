@@ -62,6 +62,7 @@ function soundcloud() {
     /path/to/soundcloud-downloader.py "$@" CLIENT_ID
 }
 ```
+Replace `CLIENT_ID` with your application client id obtained in the step above.
 
 ### Example usage
 
